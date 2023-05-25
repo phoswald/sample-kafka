@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server description="SampleServer">
+
+  <featureManager>
+    <!-- Jakarta EE 10 -->
+    <!-- See: https://openliberty.io/docs/latest/reference/feature/jakartaee-10.0.html -->
+    <!-- See: https://openliberty.io/docs/latest/reference/feature/webProfile-10.0.html -->
+    <feature>cdi-4.0</feature>
+    <feature>jsonb-3.0</feature>
+    <feature>persistence-3.1</feature>
+    <feature>restfulWS-3.1</feature>
+
+    <!-- Microprofile 6.0 -->
+    <!-- See: https://openliberty.io/docs/latest/reference/feature/microProfile-6.0.html -->
+    <feature>mpConfig-3.0</feature>
+    <feature>mpHealth-4.0</feature>
+    <feature>mpMetrics-5.0</feature>
+    <feature>mpOpenAPI-3.1</feature>
+  </featureManager>
+
+  <variable name="default.http.port"  defaultValue="8080"/>
+  <variable name="default.https.port" defaultValue="8443"/>
+  <!-- 
+  <variable name="app.jdbc.url"       defaultValue="jdbc:h2:mem:test" />
+  <variable name="app.jdbc.username"  defaultValue="sa" />
+  <variable name="app.jdbc.password"  defaultValue="sa" />
+  <variable name="app.sample.config"  defaultValue="ValueFromServerXml" />
+  -->
+
+  <httpEndpoint id="defaultHttpEndpoint" 
+    host="*"
+    httpPort="${default.http.port}" 
+    httpsPort="${default.https.port}" />
+
+  <webApplication location="sample-kafka.war" contextRoot="/" />
+  
+  <library id="pgJdbcLib">
+    <fileset dir="${shared.resource.dir}" includes="postgresql-*.jar"/>
+  </library>
+
+  <dataSource id="orderDS" jndiName="jdbc/orderDS">
+    <jdbcDriver libraryRef="pgJdbcLib" />
+    <properties URL="${app.jdbc.url}" user="${app.jdbc.username}" password="${app.jdbc.password}"/>
+  </dataSource>
+
+  <mpMetrics authentication="false"/>
+
+</server>
