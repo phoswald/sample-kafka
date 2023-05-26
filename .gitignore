@@ -1,4 +1,5 @@
 target/
+kafka_*/
 
 .project
 .classpath

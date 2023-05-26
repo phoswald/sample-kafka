@@ -60,6 +60,28 @@
       <artifactId>jakarta.transaction-api</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.enterprise.concurrent</groupId>
+      <artifactId>jakarta.enterprise.concurrent-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.microprofile.config</groupId>
+      <artifactId>microprofile-config-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.26</version>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency> 
       <groupId>org.slf4j</groupId>
@@ -67,9 +89,9 @@
       <version>2.0.7</version>
     </dependency>
     <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>1.18.26</version>
+      <groupId>org.apache.kafka</groupId>
+      <artifactId>kafka-clients</artifactId>
+      <version>3.4.0</version>
     </dependency>
   </dependencies>
 
@@ -94,6 +116,9 @@
             <app.jdbc.url>jdbc:postgresql://localhost:5432/mydb</app.jdbc.url>
             <app.jdbc.username>myuser</app.jdbc.username>
             <app.jdbc.password>mypassword</app.jdbc.password>
+            <app.kafka.bootstrap.servers>localhost:9092</app.kafka.bootstrap.servers>
+            <app.kafka.consumer.topic>quickstart-events</app.kafka.consumer.topic>
+            <app.kafka.producer.topic>quickstart-events</app.kafka.producer.topic>
           </bootstrapProperties>
         </configuration>
       </plugin>

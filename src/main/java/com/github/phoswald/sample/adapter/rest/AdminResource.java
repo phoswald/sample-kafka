@@ -9,6 +9,7 @@ import com.github.phoswald.sample.application.OrderApplication;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -43,5 +44,12 @@ public class AdminResource {
         } else {
             return Response.status(Status.NOT_FOUND).build();
         }
+    }
+    
+    @POST
+    @Path("/event/{orderId}")
+    public void postOrderEvent(
+            @PathParam("orderId") String orderId) {
+        application.produceOrder(orderId);
     }
 }

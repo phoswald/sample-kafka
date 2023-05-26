@@ -13,7 +13,7 @@ import jakarta.persistence.TypedQuery;
 @Dependent
 public class OrderRepository {
 
-    @PersistenceContext(name = "orderDS")
+    @PersistenceContext(name = "appDS")
     private EntityManager em;
     
     public List<Order> findOrders(Integer offset, Integer count) {

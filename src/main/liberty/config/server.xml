@@ -9,6 +9,7 @@
     <feature>jsonb-3.0</feature>
     <feature>persistence-3.1</feature>
     <feature>restfulWS-3.1</feature>
+    <feature>concurrent-3.0</feature>
 
     <!-- Microprofile 6.0 -->
     <!-- See: https://openliberty.io/docs/latest/reference/feature/microProfile-6.0.html -->
@@ -20,12 +21,6 @@
 
   <variable name="default.http.port"  defaultValue="8080"/>
   <variable name="default.https.port" defaultValue="8443"/>
-  <!-- 
-  <variable name="app.jdbc.url"       defaultValue="jdbc:h2:mem:test" />
-  <variable name="app.jdbc.username"  defaultValue="sa" />
-  <variable name="app.jdbc.password"  defaultValue="sa" />
-  <variable name="app.sample.config"  defaultValue="ValueFromServerXml" />
-  -->
 
   <httpEndpoint id="defaultHttpEndpoint" 
     host="*"
@@ -33,16 +28,18 @@
     httpsPort="${default.https.port}" />
 
   <webApplication location="sample-kafka.war" contextRoot="/" />
+
+  <mpMetrics authentication="false"/>
   
-  <library id="pgJdbcLib">
+  <managedExecutorService id="appMES" jndiName="concurrent/appMES" />
+  
+  <library id="appPgJdbcLib">
     <fileset dir="${shared.resource.dir}" includes="postgresql-*.jar"/>
   </library>
 
-  <dataSource id="orderDS" jndiName="jdbc/orderDS">
-    <jdbcDriver libraryRef="pgJdbcLib" />
+  <dataSource id="appDS" jndiName="jdbc/appDS">
+    <jdbcDriver libraryRef="appPgJdbcLib" />
     <properties URL="${app.jdbc.url}" user="${app.jdbc.username}" password="${app.jdbc.password}"/>
   </dataSource>
-
-  <mpMetrics authentication="false"/>
 
 </server>

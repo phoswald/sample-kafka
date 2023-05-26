@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.phoswald.sample.adapter.producer.EventProducer;
 import com.github.phoswald.sample.adapter.rest.OrderResource;
 import com.github.phoswald.sample.repository.OrderRepository;
 
@@ -22,6 +23,9 @@ public class OrderApplication {
     
     @Inject
     private OrderRepository repository;
+    
+    @Inject
+    private EventProducer eventProducer;
     
     public List<Order> findOrders(Integer offset, Integer count) {
         logger.info("Finding orders: offset={}, count={}", offset, count);
@@ -43,5 +47,19 @@ public class OrderApplication {
                 .build();
         logger.info("Adding order: {}", order);
         repository.storeOrder(order);
+    }
+    
+    public void produceOrder(String orderId) {
+        Optional<Order> order = repository.findOrderById(orderId);
+        if(order.isPresent()) {
+            logger.info("Producing: orderId={}", orderId);
+            eventProducer.produceOrderEvent(order.get());
+        } else {
+            logger.warn("Producing not possible: orderId={} not found", orderId);
+        }
+    }
+    
+    public void consumePayment(String paymentId) {
+        logger.info("Consuming: paymentId={}", paymentId);
     }
 }
