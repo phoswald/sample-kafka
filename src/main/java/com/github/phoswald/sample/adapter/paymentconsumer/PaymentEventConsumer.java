@@ -1,4 +1,4 @@
-package com.github.phoswald.sample.adapter.consumer;
+package com.github.phoswald.sample.adapter.paymentconsumer;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.phoswald.sample.application.OrderApplication;
+import com.github.phoswald.sample.application.PaymentEvent;
 
 import jakarta.annotation.Resource;
 import jakarta.enterprise.concurrent.ManagedExecutorService;
@@ -19,11 +20,15 @@ import jakarta.enterprise.context.Destroyed;
 import jakarta.enterprise.context.Initialized;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
 
 @ApplicationScoped
-public class EventConsumer {
+public class PaymentEventConsumer {
+
+    private static final Jsonb json = JsonbBuilder.create();
     
-    private final Logger logger = LoggerFactory.getLogger(EventConsumer.class);
+    private final Logger logger = LoggerFactory.getLogger(PaymentEventConsumer.class);
     
     @Inject
     @ConfigProperty(name="app.kafka.bootstrap.servers")
@@ -49,6 +54,7 @@ public class EventConsumer {
         logger.info("Opening successful.");
     }
     
+    // TODO: not called reliably, and not waited for completion
     void close(@Observes @Destroyed(ApplicationScoped.class) Object event) {
         logger.info("Closing...");
         kafkaConsumer.close();
@@ -59,13 +65,24 @@ public class EventConsumer {
     private void processMessages() {
         logger.info("Processing...");
         while(kafkaConsumer != null) {
-            var records = kafkaConsumer.poll(Duration.ofMillis(100));
-            for (ConsumerRecord<String, String> record : records) {
-                logger.info("Consuming offset={}, key={}, value={}", record.offset(), record.key(), record.value());
-                application.consumePayment(record.value());
-            }
+            kafkaConsumer.poll(Duration.ofMillis(100)).forEach(this::processEvent);
         }
         logger.info("Processing finished.");
+    }
+    
+    private void processEvent(ConsumerRecord<String, String> event) {
+        try {
+            logger.info("Consuming topic={}, offset={}, key={}, value={}",
+                    kafkaTopic, event.offset(), event.key(), event.value());
+            application.handlePaymentEvent(deserializeEvent(event.value()));
+            
+        } catch(RuntimeException e) {
+            logger.error("Error while processing Kafka event:", e);
+        }
+    }
+    
+    private PaymentEvent deserializeEvent(String value) {
+        return json.fromJson(value, PaymentEvent.class);
     }
 
     private Properties getProperties() {

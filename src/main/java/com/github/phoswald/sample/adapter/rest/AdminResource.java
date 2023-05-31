@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.github.phoswald.sample.application.Order;
 import com.github.phoswald.sample.application.OrderApplication;
+import com.github.phoswald.sample.application.PaymentEvent;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -26,6 +27,7 @@ public class AdminResource {
     private OrderApplication application;
 
     @GET
+    @Path("orders")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Order> getOrders(
             @QueryParam("offset") Integer offset,
@@ -34,7 +36,7 @@ public class AdminResource {
     }
 
     @GET
-    @Path("{orderId}")
+    @Path("orders/{orderId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getOrder(
             @PathParam("orderId") String orderId) {
@@ -47,9 +49,12 @@ public class AdminResource {
     }
     
     @POST
-    @Path("/event/{orderId}")
+    @Path("payment/{paymentId}/event")
     public void postOrderEvent(
-            @PathParam("orderId") String orderId) {
-        application.produceOrder(orderId);
+            @PathParam("paymentId") String paymentId) {
+        PaymentEvent paymentEvent = PaymentEvent.builder()
+                .paymentId(paymentId)
+                .build();
+        application.handlePaymentEvent(paymentEvent);
     }
 }

@@ -1,6 +1,13 @@
 
 # sample-kafka
 
+Experiments with OpenLiberty and Apache Kafka
+
+TODO:
+
+- Shutdown does not complete
+- Exception in consumer on shutdown
+
 ## Maven
 
 ~~~
@@ -43,11 +50,17 @@ $ KAFKA_CLUSTER_ID="$(bin/kafka-storage.sh random-uuid)"
 $ bin/kafka-storage.sh format -t $KAFKA_CLUSTER_ID -c config/kraft/server.properties
 $ bin/kafka-server-start.sh config/kraft/server.properties
 
-$ bin/kafka-topics.sh --create --topic quickstart-events --bootstrap-server localhost:9092
-$ bin/kafka-topics.sh --describe --topic quickstart-events --bootstrap-server localhost:9092
+$ bin/kafka-topics.sh --create   --topic payment-events    --bootstrap-server localhost:9092
+$ bin/kafka-topics.sh --create   --topic order-events      --bootstrap-server localhost:9092
+$ bin/kafka-topics.sh --describe --topic payment-events    --bootstrap-server localhost:9092
+$ bin/kafka-topics.sh --describe --topic order-events      --bootstrap-server localhost:9092
 
-$ bin/kafka-console-producer.sh --topic quickstart-events --bootstrap-server localhost:9092
-$ bin/kafka-console-consumer.sh --topic quickstart-events --from-beginning --bootstrap-server localhost:9092
+$ bin/kafka-console-consumer.sh --topic payment-events    --from-beginning --bootstrap-server localhost:9092
+$ bin/kafka-console-consumer.sh --topic order-events      --from-beginning --bootstrap-server localhost:9092
+
+$ bin/kafka-console-producer.sh --topic payment-events    --bootstrap-server localhost:9092 <<EOF
+{"paymentId":"O-001"}
+EOF
 
 $ rm -rf /tmp/kraft-combined-logs
 ~~~

@@ -31,6 +31,12 @@ public class OrderRepository {
         return Optional.ofNullable(em.find(OrderEntity.class, orderId)).map(this::mapOrderEntity);
     }
 
+    public Optional<Order> findOrderByPaymentId(String paymentId) {
+        TypedQuery<OrderEntity> query = em.createNamedQuery(OrderEntity.SELECT_BY_PAYMENTID, OrderEntity.class);
+        query.setParameter("paymentId", paymentId);
+        return query.getResultStream().map(this::mapOrderEntity).findFirst();
+    }
+
     public void storeOrder(Order order) {
         OrderEntity entity = mapOrder(order);
         if(em.find(OrderEntity.class, order.getOrderId()) == null) {

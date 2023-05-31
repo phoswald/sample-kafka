@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.phoswald.sample.adapter.producer.EventProducer;
+import com.github.phoswald.sample.adapter.orderproducer.OrderEventProducer;
 import com.github.phoswald.sample.adapter.rest.OrderResource;
 import com.github.phoswald.sample.repository.OrderRepository;
 
@@ -25,7 +25,7 @@ public class OrderApplication {
     private OrderRepository repository;
     
     @Inject
-    private EventProducer eventProducer;
+    private OrderEventProducer eventProducer;
     
     public List<Order> findOrders(Integer offset, Integer count) {
         logger.info("Finding orders: offset={}, count={}", offset, count);
@@ -48,18 +48,24 @@ public class OrderApplication {
         logger.info("Adding order: {}", order);
         repository.storeOrder(order);
     }
-    
-    public void produceOrder(String orderId) {
-        Optional<Order> order = repository.findOrderById(orderId);
-        if(order.isPresent()) {
-            logger.info("Producing: orderId={}", orderId);
-            eventProducer.produceOrderEvent(order.get());
+   
+    public void handlePaymentEvent(PaymentEvent paymentEvent) {
+        logger.info("Consuming: paymentId={}", paymentEvent.getPaymentId());
+        Optional<Order> orderOptional = repository.findOrderByPaymentId(paymentEvent.getPaymentId());
+        if(orderOptional.isPresent()) {
+            Order order = orderOptional.get();
+            order.setStatus(OrderStatus.PAYED);
+            order.setTimestamp(Instant.now());
+            repository.storeOrder(order);
+            logger.info("Producing: order: {}", order);
+            OrderEvent orderEvent = OrderEvent.builder()
+                    .orderId(order.getOrderId())
+                    .orderDetails(order.getOrderDetails())
+                    .status(order.getStatus())
+                    .build();
+            eventProducer.handleOrderEvent(orderEvent);
         } else {
-            logger.warn("Producing not possible: orderId={} not found", orderId);
+            logger.warn("Consuming not possible: paymentId={} not found", paymentEvent.getPaymentId());
         }
-    }
-    
-    public void consumePayment(String paymentId) {
-        logger.info("Consuming: paymentId={}", paymentId);
     }
 }

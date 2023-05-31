@@ -71,6 +71,11 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>jakarta.json.bind</groupId>
+      <artifactId>jakarta.json.bind-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.eclipse.microprofile.config</groupId>
       <artifactId>microprofile-config-api</artifactId>
       <scope>provided</scope>
@@ -117,8 +122,8 @@
             <app.jdbc.username>myuser</app.jdbc.username>
             <app.jdbc.password>mypassword</app.jdbc.password>
             <app.kafka.bootstrap.servers>localhost:9092</app.kafka.bootstrap.servers>
-            <app.kafka.consumer.topic>quickstart-events</app.kafka.consumer.topic>
-            <app.kafka.producer.topic>quickstart-events</app.kafka.producer.topic>
+            <app.kafka.consumer.topic>payment-events</app.kafka.consumer.topic>
+            <app.kafka.producer.topic>order-events</app.kafka.producer.topic>
           </bootstrapProperties>
         </configuration>
       </plugin>

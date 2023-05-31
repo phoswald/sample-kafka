@@ -20,11 +20,13 @@ import lombok.Setter;
 @Entity
 @Table(name = "ORDER_")
 @NamedQuery(name = OrderEntity.SELECT_ALL, query = "select o from OrderEntity o order by o.timestamp desc")
+@NamedQuery(name = OrderEntity.SELECT_BY_PAYMENTID, query = "select o from OrderEntity o where o.paymentId = :paymentId")
 @Getter
 @Setter
 public class OrderEntity {
 
     static final String SELECT_ALL = "OrderEntity.SelectAll";
+    static final String SELECT_BY_PAYMENTID = "OrderEntity.SelectByPaymentId";
     
     @Id
     @Column(name = "ORDER_ID_")
