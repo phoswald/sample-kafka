@@ -38,13 +38,13 @@ Links:
 
 Installation:
 
-- Download https://dlcdn.apache.org/kafka/3.4.0/kafka_2.13-3.4.0.tgz
+- Download https://dlcdn.apache.org/kafka/3.5.0/kafka_2.13-3.5.0.tgz
 - Extract and run as follows:
 - Console producer and consumers are line based, and can be quit using Ctrl+C
 
 ~~~
-$ tar -xzf ~/Downloads/Linux/Java/kafka_2.13-3.4.0.tgz
-$ cd kafka_2.13-3.4.0/
+$ tar -xzf ~/Downloads/Linux/Java/kafka_2.13-3.5.0.tgz
+$ cd kafka_2.13-3.5.0/
 
 $ KAFKA_CLUSTER_ID="$(bin/kafka-storage.sh random-uuid)"
 $ bin/kafka-storage.sh format -t $KAFKA_CLUSTER_ID -c config/kraft/server.properties
@@ -59,7 +59,7 @@ $ bin/kafka-console-consumer.sh --topic payment-events    --from-beginning --boo
 $ bin/kafka-console-consumer.sh --topic order-events      --from-beginning --bootstrap-server localhost:9092
 
 $ bin/kafka-console-producer.sh --topic payment-events    --bootstrap-server localhost:9092 <<EOF
-{"paymentId":"O-001"}
+{"paymentId":"P-001"}
 EOF
 
 $ rm -rf /tmp/kraft-combined-logs
